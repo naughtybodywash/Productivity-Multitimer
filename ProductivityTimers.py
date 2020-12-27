@@ -6,6 +6,7 @@ Created on Fri Dec 25 20:38:35 2020
 """
 
 # Import packages
+import threading
 from tkinter import *
 import datetime as dt
 import time
@@ -42,10 +43,6 @@ def pomodoro():
     
     #Messagebox
     pom.configure(text="Timer running...")
-    #messagebox.showinfo("Pomodoro", "Pomodoro started!"+ "\nIt is now "+t_now.strftime("%H:%M")+" hrs. \nTimer set for 25 mins.") 
-    # Next line to be uncommented when the timer itself is built
-
-
     
     total_pomodoros = 0
     breaks = 0
@@ -92,9 +89,18 @@ def pomodoro():
         t_now = dt.datetime.now()
         timenow = t_now.strftime("%H:%M")
 
+# Create a separate thread for the pomodoro timer
+def start_pom_thread(event):
+    global pom_thread
+    pom_thread = threading.Thread(target=pomodoro)
+    pom_thread.daemon = True
+    #progressbar.start()
+    pom_thread.start()
+
+
 #Create hydrate button
 btnH = Button(root, text="Start", command=hydration)
-btnP = Button(root, text="Start", command=pomodoro)
+btnP = Button(root, text="Start", command=lambda:start_pom_thread(None))
 
 btnH.grid(column=1, row=0)
 btnP.grid(column=1, row=1)
